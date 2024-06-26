@@ -11,12 +11,6 @@ export default defineAppConfig({
         actionButton: {
           variant: 'link',
         },
-        closeButton: {
-          icon: 'i-fa6-solid-xmark',
-          color: 'gray',
-          variant: 'link',
-          padded: false,
-        },
       },
     },
     badge: {
@@ -33,22 +27,18 @@ export default defineAppConfig({
     card: {
       divide: 'divide-y-0',
     },
-    dashboard: {
-      // panel: {
-      //   content: {
-      //     wrapper: 'gap-8',
-      //   },
-      // },
-      section: {
-        container: 'items-start md:flex-nowrap',
-        links: 'w-full md:w-80 flex-nowrap flex-col flex-shrink-0',
-      },
-    },
+    // dashboard: {
+    //   panel: {
+    //     content: {
+    //       wrapper: 'gap-8',
+    //     },
+    //   },
+    // },
     header: {
       button: {
         icon: {
           open: 'i-fa6-solid-bars',
-          close: 'i-fa6-solid-xmark',
+          close: 'i-fa6-solid-x',
         },
       },
     },

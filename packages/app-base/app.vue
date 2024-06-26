@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { changeLocale } from '@formkit/vue';
   import { useAuthStore } from '@tituskirch/app-base/stores/auth';
-  import { useFeatureStore } from '@tituskirch/app-base/stores/feature';
 
   // head
   const route = useRoute();
@@ -88,7 +87,7 @@
   );
   const { me } = useUser();
   const user = await me();
-  if (user.value) {
+  if (user) {
     const { userConfirmedPasswordStatus } = useAuth();
     const { data: userConfirmedPasswordStatusData, execute: userConfirmedPasswordStatusExecute } =
       await userConfirmedPasswordStatus();
@@ -97,10 +96,6 @@
       authStore.resetUserPasswordConfirmed();
     }
   }
-
-  // feature flags
-  const featureStore = useFeatureStore();
-  await featureStore.fetchFeatures();
 </script>
 
 <template>

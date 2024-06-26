@@ -27,13 +27,6 @@
         }),
       },
       {
-        label: t('page.settings.security.title'),
-        icon: 'i-fa6-solid-lock',
-        to: localePath({
-          name: 'settings-security',
-        }),
-      },
-      {
         label: t('page.settings.notifications.title'),
         icon: 'i-fa6-solid-bell',
         to: localePath({

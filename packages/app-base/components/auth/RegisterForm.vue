@@ -1,45 +1,69 @@
 <script setup lang="ts">
+  import type { FormKitNode } from '@formkit/core';
+
   // form setup
-  const turnstile = ref();
-  const turnstileToken = ref('');
-  const form: Ref<AuthRegisterData> = ref({
+  type Form = AuthRegisterForm;
+  const form: Ref<Form> = ref({
     first_name: '',
     last_name: '',
     email: '',
-    email_confirmation: '',
+    email_confirm: '',
     password: '',
-    password_confirmation: '',
+    password_confirm: '',
     remember: false,
-    'cf-turnstile-response': '',
   });
+  const errorMessages: Ref<Record<string, string>> = ref({});
   const { passwordToggle } = useFormKit();
-  const { register } = useAuth();
+
+  // submit handling
+  const { transformRegisterFormToData, register } = useAuth();
+  const registerData: Ref<AuthRegisterData | undefined> = ref();
   const { error, status, execute } = await register({
-    data: form,
+    data: registerData,
   });
-  const { submit, errorMessages } = useFormKitForm<AuthRegisterData>({
-    form,
-    error,
-    status,
-    beforeExecuteCallback: async () => {
-      form.value['cf-turnstile-response'] = turnstileToken.value;
-    },
-    executeCallback: execute,
-    successCallback: async () => {
+  const submit = async (data: Form, node: FormKitNode) => {
+    registerData.value = transformRegisterFormToData({
+      form: form.value,
+    });
+    await execute();
+    errorMessages.value = {};
+    if (error.value?.data?.errors) {
+      for (const key in error.value.data.errors) {
+        errorMessages.value[key] = error.value.data.errors[key][0];
+      }
+      node.setErrors([], errorMessages.value);
+      return false;
+    } else if (error.value?.data?.message) {
+      errorMessages.value = {
+        form: error.value.data.message,
+      };
+      return false;
+    }
+
+    if (status.value === 'success') {
       const { me } = useUser();
-      return await me().finally(async () => {
-        return navigateToLocale({
-          name: 'index',
-        });
+      await me();
+
+      return navigateToLocale({
+        name: 'index',
       });
-    },
-    errorCallback: async () => {
-      turnstile.value?.reset();
-    },
+    }
+  };
+
+  // error handling
+  watch(form, (newValue: Form, oldValue: Form) => {
+    for (const key of Object.keys(newValue) as Array<keyof Form>) {
+      if (newValue[key] !== oldValue[key]) {
+        // TODO: Refactor to doesn't use dynamic delete
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete errorMessages.value[key];
+      }
+    }
   });
 
   // third party providers
-  const { authProviders } = useAuth();
+  const { thirdPartyProviders } = useAuth();
+  const providers = thirdPartyProviders();
 </script>
 <template>
   <div class="space-y-6">
@@ -53,7 +77,7 @@
     >
       <FormErrorsAlert :error-messages="errorMessages" />
 
-      <div class="grid gap-x-4 lg:grid-cols-2">
+      <div class="grid md:grid-cols-2 gap-4">
         <FormKit
           type="text"
           name="first_name"
@@ -61,7 +85,6 @@
           validation="required"
           :placeholder="usePlaceholder({ type: 'first_name' })"
           prefix-icon="people"
-          autocomplete="given-name"
         />
         <FormKit
           type="text"
@@ -70,7 +93,6 @@
           validation="required"
           :placeholder="usePlaceholder({ type: 'last_name' })"
           prefix-icon="people"
-          autocomplete="family-name"
         />
       </div>
       <FormKit
@@ -80,16 +102,14 @@
         validation="required|email"
         :placeholder="usePlaceholder({ type: 'email' })"
         prefix-icon="email"
-        autocomplete="username"
       />
       <FormKit
         type="email"
-        name="email_confirmation"
-        :label="$t('global.email_confirmation.label')"
-        validation="required|email|confirm:email"
+        name="email_confirm"
+        :label="$t('global.email_confirm.label')"
+        validation="required|email|confirm"
         :placeholder="usePlaceholder({ type: 'email' })"
         prefix-icon="email"
-        autocomplete="username"
       />
       <FormKit
         type="password"
@@ -99,35 +119,23 @@
         :placeholder="usePlaceholder({ type: 'password' })"
         prefix-icon="password"
         suffix-icon="eyeClosed"
-        autocomplete="new-password"
         @suffix-icon-click="passwordToggle"
       />
       <FormKit
         type="password"
-        name="password_confirmation"
-        :label="$t('global.password_confirmation.label')"
-        validation="required|confirm:password"
+        name="password_confirm"
+        :label="$t('global.password_confirm.label')"
+        validation="required|confirm"
         :placeholder="usePlaceholder({ type: 'password' })"
         prefix-icon="password"
         suffix-icon="eyeClosed"
-        autocomplete="new-password"
         @suffix-icon-click="passwordToggle"
       />
-
-      <FormTurnstileContainer :first-show-on="valid">
-        <NuxtTurnstile
-          ref="turnstile"
-          v-model="turnstileToken"
-          :options="{
-            action: 'register',
-          }"
-        />
-      </FormTurnstileContainer>
 
       <UButton
         type="submit"
         block
-        :disabled="!valid || !!Object.keys(errorMessages).length || !turnstileToken"
+        :disabled="!valid || !!Object.keys(errorMessages).length"
         :loading="status === 'pending' || (status !== 'idle' && !error)"
         icon="i-fa6-solid-right-to-bracket"
         :ui="{
@@ -139,14 +147,14 @@
 
     <UDivider :label="$t('global.or.label')" />
 
-    <div v-if="authProviders()?.length" class="space-y-3">
+    <div v-if="providers?.length" class="space-y-3">
       <UButton
-        v-for="authProvider in authProviders()"
-        :key="authProvider.provider"
-        v-bind="authProvider"
+        v-for="(provider, index) in providers"
+        :key="index"
+        v-bind="provider"
         color="gray"
         block
-        @click="authProvider.click"
+        @click="provider.click"
       />
     </div>
   </div>

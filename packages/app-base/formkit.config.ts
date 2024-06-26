@@ -6,9 +6,8 @@ import {
 import { genesisIcons } from '@formkit/icons';
 import { createProPlugin, inputs } from '@formkit/pro';
 import { generateClasses } from '@formkit/themes';
-import { createInput, defineFormKitConfig } from '@formkit/vue';
+import { defineFormKitConfig } from '@formkit/vue';
 import { de, en } from '@formkit/i18n';
-import FormKitInputOneTimePassword from '@tituskirch/app-base/components/form/kit/input/OneTimePassword.vue';
 
 // NOTE: FA PRO
 // import { fal } from '@fortawesome/pro-light-svg-icons';
@@ -98,11 +97,6 @@ export default defineFormKitConfig(() => {
     },
     locale: 'en',
     plugins,
-    inputs: {
-      otp: createInput(FormKitInputOneTimePassword, {
-        props: ['digits'],
-      }),
-    },
     icons: {
       // fallback to formkit icons
       ...genesisIcons,

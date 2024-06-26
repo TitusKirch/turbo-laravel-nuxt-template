@@ -20,7 +20,3 @@ type ApiFetchOptions = {
   version?: string | false;
   setCsrfToken?: boolean;
 };
-
-type ApiRequestDataTurnstile = {
-  'cf-turnstile-response': string;
-};

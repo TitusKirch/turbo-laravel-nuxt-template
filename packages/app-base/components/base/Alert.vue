@@ -5,30 +5,18 @@
       icon?: string;
       title?: string;
       description?: string;
-      canBeClosed?: boolean;
-      forceShow?: boolean;
     }>(),
     {
       type: 'info',
       icon: '',
       title: '',
       description: '',
-      canBeClosed: false,
-      forceShow: false,
     }
   );
   defineSlots<{
     title?: HTMLElement;
     description?: HTMLElement;
   }>();
-  const show = ref(true);
-
-  const closedButton = computed(() => {
-    return props.canBeClosed && !props.forceShow;
-  });
-  const close = () => {
-    show.value = false;
-  };
 
   const { getColorByType, getIconByType } = useAlertStyle();
   const color = computed(() => {
@@ -44,15 +32,7 @@
 </script>
 
 <template>
-  <UAlert
-    v-if="show || forceShow"
-    :color="color"
-    :icon="icon"
-    :title="title"
-    :description="description"
-    :close-button="closedButton"
-    @close="close"
-  >
+  <UAlert :color="color" :icon="icon" :title="title" :description="description">
     <template v-if="$slots.title" #title>
       <slot name="title" />
     </template>

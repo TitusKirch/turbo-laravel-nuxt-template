@@ -4,9 +4,7 @@ export default defineNuxtRouteMiddleware((to) => {
   if (!isAuthenticated()) {
     return navigateToLocale({
       name: 'auth-login',
-      query: {
-        redirect: to.fullPath !== '/' ? to.fullPath : undefined,
-      },
+      query: { redirect: to.fullPath },
     });
   }
 });

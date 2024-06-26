@@ -1,11 +1,9 @@
-import type { LocationQuery } from 'vue-router';
-
 export default function () {
   // login
-  const login = ({ data }: { data: Ref<AuthLoginData | undefined> }) => {
+  const login = ({ data }: { data: Ref<AuthLoginForm | undefined> }) => {
     const { post } = useApi();
 
-    return post<AuthLoginData, AuthLoginResponse>('login', {
+    return post<AuthLoginForm, AuthLoginResponse>('login', {
       immediate: false,
       watch: false,
       prefix: 'auth',
@@ -27,6 +25,16 @@ export default function () {
   };
 
   // registration
+  const transformRegisterFormToData = ({ form }: { form: AuthRegisterForm }): AuthRegisterData => {
+    return {
+      first_name: form.first_name,
+      last_name: form.last_name,
+      email: form.email,
+      name: form.email,
+      password: form.password,
+      password_confirmation: form.password_confirm,
+    };
+  };
   const register = ({ data }: { data: Ref<AuthRegisterData | undefined> }) => {
     const { post } = useApi();
 
@@ -54,31 +62,33 @@ export default function () {
     );
   };
   const emailVerify = ({
-    path,
-    params,
+    id,
+    hash,
+    expires,
+    signature,
   }: {
-    path: Ref<AuthEmailVerifyPath>;
-    params: Ref<AuthEmailVerifyParams>;
-  }) => {
+    id: string;
+    hash: string;
+  } & AuthEmailVerifyData) => {
     const { get } = useApi();
 
-    return get<AuthEmailVerifyParams, AuthEmailVerifyResponse>(
-      `email/verify/${path.value.id}/${path.value.hash}`,
-      {
-        immediate: false,
-        watch: false,
-        prefix: 'auth',
-        version: false,
-        params,
-      }
-    );
+    return get<AuthEmailVerifyData, AuthEmailVerifyResponse>(`email/verify/${id}/${hash}`, {
+      immediate: false,
+      watch: false,
+      prefix: 'auth',
+      version: false,
+      params: {
+        expires,
+        signature,
+      },
+    });
   };
 
   // forgot password
-  const forgotPassword = ({ data }: { data: Ref<AuthForgotPasswordData | undefined> }) => {
+  const forgotPassword = ({ data }: { data: Ref<AuthForgotPasswordForm | undefined> }) => {
     const { post } = useApi();
 
-    return post<AuthForgotPasswordData, AuthForgotPasswordResponse>('forgot-password', {
+    return post<AuthForgotPasswordForm, AuthForgotPasswordResponse>('forgot-password', {
       immediate: false,
       watch: false,
       prefix: 'auth',
@@ -88,6 +98,18 @@ export default function () {
   };
 
   // reset password
+  const transformResetPasswordFormToData = ({
+    form,
+  }: {
+    form: AuthResetPasswordForm;
+  }): AuthResetPasswordData => {
+    return {
+      email: form.email,
+      token: form.token,
+      password: form.password,
+      password_confirmation: form.password_confirm,
+    };
+  };
   const resetPassword = ({ data }: { data: Ref<AuthResetPasswordData | undefined> }) => {
     const { post } = useApi();
 
@@ -133,185 +155,36 @@ export default function () {
     );
   };
 
-  // two factor authentication
-  const enableTwoFactorAuthentication = () => {
-    const { post } = useApi();
-
-    return post<undefined, ApiResponse<undefined>>('user/two-factor-authentication', {
-      immediate: false,
-      watch: false,
-      prefix: 'auth',
-      version: false,
-    });
-  };
-  const disableTwoFactorAuthentication = () => {
-    const { delete: del } = useApi();
-
-    return del<undefined, ApiResponse<undefined>>('user/two-factor-authentication', {
-      immediate: false,
-      watch: false,
-      prefix: 'auth',
-      version: false,
-    });
-  };
-  const twoFactorQrCode = () => {
-    const { get } = useApi();
-
-    return get<AuthUserTwoFactorQrCodeData, AuthUserTwoFactorQrCodeResponse>(
-      'user/two-factor-qr-code',
-      {
-        immediate: false,
-        watch: false,
-        prefix: 'auth',
-        version: false,
-      }
-    );
-  };
-  const confirmedTwoFactorAuthentication = ({
-    data,
-  }: {
-    data: Ref<AuthUserConfirmedTwoFactorAuthenticationData | undefined>;
-  }) => {
-    const { post } = useApi();
-
-    return post<
-      AuthUserConfirmedTwoFactorAuthenticationData,
-      AuthUserConfirmedTwoFactorAuthenticationResponse
-    >('user/confirmed-two-factor-authentication', {
-      immediate: false,
-      watch: false,
-      prefix: 'auth',
-      version: false,
-      body: data,
-    });
-  };
-  const twoFactorRecoveryCodes = () => {
-    const { get } = useApi();
-
-    return get<AuthUserTwoFactorRecoveryCodesData, AuthUserTwoFactorRecoveryCodesResponse>(
-      'user/two-factor-recovery-codes',
-      {
-        immediate: false,
-        watch: false,
-        prefix: 'auth',
-        version: false,
-      }
-    );
-  };
-  const twoFactorChallenge = ({ data }: { data: Ref<AuthTwoFactorChallengeData | undefined> }) => {
-    const { post } = useApi();
-
-    return post<AuthTwoFactorChallengeData, AuthTwoFactorChallengeResponse>(
-      'two-factor-challenge',
-      {
-        immediate: false,
-        watch: false,
-        prefix: 'auth',
-        version: false,
-        body: data,
-      }
-    );
-  };
-
-  // set password
-  const setPassword = ({ data }: { data: Ref<AuthSetPasswordData> }) => {
-    const { post } = useApi();
-
-    return post<AuthSetPasswordData, AuthSetPasswordResponse>('set-password', {
-      immediate: false,
-      watch: false,
-      prefix: 'auth',
-      version: false,
-      body: data,
-    });
-  };
-
   // third party providers
-  const authProviderRedirect = ({ provider }: { provider: AuthProvider }) => {
-    const { get } = useApi();
-
-    return get<undefined, AuthProviderResponse>(`provider/${provider}`, {
-      immediate: false,
-      watch: false,
-      prefix: 'auth',
-      version: false,
-    });
-  };
-  const authProviderCallback = ({
-    provider,
-    query,
-  }: {
-    provider: AuthProvider;
-    query?: LocationQuery;
-  }) => {
-    const { get } = useApi();
-
-    return get<undefined, ApiResponse<undefined>>(`provider/${provider}/callback`, {
-      immediate: false,
-      watch: false,
-      prefix: 'auth',
-      version: false,
-      query,
-    });
-  };
-  const authProviders: () => {
-    provider: AuthProvider;
-    label: string;
-    icon: string;
-    click: () => void;
-  }[] = () => {
-    const { t } = useI18n();
-
-    const click = async ({ provider }: { provider: AuthProvider }): Promise<void> => {
-      const { execute, data } = authProviderRedirect({ provider });
-      await execute();
-
-      if (data.value?.redirect) {
-        navigateTo(data.value.redirect, {
-          external: true,
-        });
-      }
-    };
-
-    return [
-      {
-        provider: 'github',
-        label: t('auth.provider.github.label'),
-        icon: 'i-fa6-brands-github',
-        click: async () => {
-          await click({ provider: 'github' });
-        },
+  const thirdPartyProviders = () => [
+    {
+      label: 'Google',
+      icon: 'i-fa6-brands-google',
+      click: () => {
+        alert('Placeholder provider for Google');
       },
-      {
-        provider: 'google',
-        label: t('auth.provider.google.label'),
-        icon: 'i-fa6-brands-google',
-        click: async () => {
-          await click({ provider: 'google' });
-        },
+    },
+    {
+      label: 'Facebook',
+      icon: 'i-fa6-brands-facebook',
+      click: () => {
+        alert('Placeholder provider for Facebook');
       },
-    ];
-  };
+    },
+  ];
 
   return {
     login,
     logout,
+    transformRegisterFormToData,
     register,
     emailVerificationNotification,
     emailVerify,
     forgotPassword,
+    transformResetPasswordFormToData,
     resetPassword,
     userConfirmPassword,
     userConfirmedPasswordStatus,
-    enableTwoFactorAuthentication,
-    disableTwoFactorAuthentication,
-    twoFactorQrCode,
-    confirmedTwoFactorAuthentication,
-    twoFactorRecoveryCodes,
-    twoFactorChallenge,
-    setPassword,
-    authProviderRedirect,
-    authProviderCallback,
-    authProviders,
+    thirdPartyProviders,
   };
 }

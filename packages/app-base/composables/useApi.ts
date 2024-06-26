@@ -4,8 +4,6 @@ export default function () {
   type FetchUrl = string | (() => string);
   type FetchOptions<ResponseT> = Omit<ApiFetchOptions & UseFetchOptions<ResponseT>, 'default'> & {
     default?: () => ResponseT | Ref<ResponseT>;
-    prefix?: string;
-    version?: string | boolean;
   };
 
   const fetchWrapper = <

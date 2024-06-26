@@ -14,15 +14,13 @@ class UserSeeder extends Seeder
     {
         // Create a default user
         User::factory()->create([
-            'first_name' => 'Test',
-            'last_name' => 'User',
+            'name' => 'Test User',
             'email' => 'test.user@example.com',
         ]);
 
         // Create a admin user
         User::factory([
-            'first_name' => 'Admin',
-            'last_name' => 'User',
+            'name' => 'Admin',
             'email' => 'admin@example.com',
         ])->admin()->create();
 
