@@ -2432,16 +2432,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.12.0",
+            "version": "v11.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "9a6d9cea83cfa6b9e8eda05c89741d0411d8ebe8"
+                "reference": "92deaa4f037ff100e36809443811301819a8cf84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/9a6d9cea83cfa6b9e8eda05c89741d0411d8ebe8",
-                "reference": "9a6d9cea83cfa6b9e8eda05c89741d0411d8ebe8",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/92deaa4f037ff100e36809443811301819a8cf84",
+                "reference": "92deaa4f037ff100e36809443811301819a8cf84",
                 "shasum": ""
             },
             "require": {
@@ -2633,7 +2633,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-06-25T19:33:56+00:00"
+            "time": "2024-06-27T09:04:50+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -4463,16 +4463,16 @@
         },
         {
             "name": "owen-it/laravel-auditing",
-            "version": "v13.6.7",
+            "version": "v13.6.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/owen-it/laravel-auditing.git",
-                "reference": "22682dd5c800aab90ef261530098625e26a66709"
+                "reference": "28ecd2d5cc05c3619f99af42611877f54371af20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/22682dd5c800aab90ef261530098625e26a66709",
-                "reference": "22682dd5c800aab90ef261530098625e26a66709",
+                "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/28ecd2d5cc05c3619f99af42611877f54371af20",
+                "reference": "28ecd2d5cc05c3619f99af42611877f54371af20",
                 "shasum": ""
             },
             "require": {
@@ -4547,7 +4547,7 @@
                 "issues": "https://github.com/owen-it/laravel-auditing/issues",
                 "source": "https://github.com/owen-it/laravel-auditing"
             },
-            "time": "2024-05-30T13:30:57+00:00"
+            "time": "2024-06-26T20:56:28+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -11535,5 +11535,5 @@
         "php": "^8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
